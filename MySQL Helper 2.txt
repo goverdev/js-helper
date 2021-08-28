@@ -1,0 +1,88 @@
+
+CREATE DATABASE record_company;
+USE record_company;
+
+CREATE TABLE bands (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE albums (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  release_year INT,
+  band_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (band_id) REFERENCES bands(id)
+);
+
+CREATE TABLE songs (
+	id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    length FLOAT NOT NULL,
+    album_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (album_id) REFERENCES albums(id) 
+);
+
+
+INSERT INTO bands(id,name) VALUES (7,'Dream Theater');
+
+
+INSERT INTO albums(id,name,release_year,band_id) VALUES (18,'Tribe of Force',2010,6);
+
+INSERT INTO songs(id,name,length,album_id) VALUES (182,'Frodo''s Dream',3+(06/60),18);
+
+SELECT name AS 'Band Name' FROM bands;
+
+SELECT * FROM albums WHERE release_year IS NOT NULL ORDER BY release_year LIMIT 1;
+
+SELECT bands.name AS 'Band Name' FROM bands
+JOIN albums ON bands.id = albums.band_id
+GROUP BY band_id;
+
+SELECT DISTINCT bands.name AS 'Band Name' FROM bands
+LEFT JOIN albums ON bands.id = albums.band_id
+WHERE albums.name IS NULL;
+
+SELECT albums.name AS 'Name', albums.release_year AS 'Release Year',  SUM(length) AS Duration
+FROM albums
+     INNER JOIN songs ON albums.id = songs.album_id
+GROUP BY albums.name
+ORDER BY Duration DESC LIMIT 1;
+
+SET SQL_SAFE_UPDATES = 1;
+
+UPDATE albums
+SET release_year = 1986
+WHERE release_year IS NULL;
+SELECT * FROM albums;
+
+INSERT INTO bands (id,name) VALUES(8,'Sade');
+
+
+INSERT INTO albums (id, name, release_year, band_id) VALUES (19, 'Diamond Life', 1984, 8);
+SELECT * FROM bands;
+
+
+DELETE FROM bands
+WHERE id = 8;
+
+SELECT AVG(length) AS 'Average Song Duration' FROM songs;
+
+SELECT albums.name AS 'Album', albums.release_year AS 'Release Year', MAX(songs.length) AS 'Duration' FROM albums
+	JOIN songs ON albums.id = songs.album_id
+		GROUP BY albums.name;
+        
+SELECT bands.name AS 'Band',  COUNT(songs.id) AS 'Number of Songs' FROM bands
+	JOIN albums ON bands.id = albums.band_id
+		JOIN songs ON albums.id = songs.album_id
+			GROUP BY bands.name;
+        
+
+
+
+
+
+
